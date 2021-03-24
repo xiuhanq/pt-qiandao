@@ -6,6 +6,8 @@ RUN python3 -m pip install selenium \
     && python3 -m pip install pillow \
     && python3 -m pip install baidu-aip
 WORKDIR /ptqiandao
-COPY alidns.py .
+COPY qiandao.py .
+COPY utils ./utils
+RUN ls -la ./*
 ENTRYPOINT [ "python3" ]
 CMD [ "/ptqiandao/qiandao.py" ] 
