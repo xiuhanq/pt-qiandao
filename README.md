@@ -9,6 +9,7 @@ PT站自动签到工具
 4. 使用本工具造成的一切损失，与作者无关。如不接受此条款，请不要使用并立刻删除已经下载的源码。
 
 ## 原理
+基于selenium调用远程chrome浏览器,模拟用户签到动作.
 
 ## 需要安装的包
 ### 1. selenium
@@ -23,3 +24,34 @@ PT站自动签到工具
 `python3 -m pip install pillow`
 ### 6 安装百度API
 `python3 -m pip install baidu-aip`
+
+### 配置文件说明 
+将`config.yaml`文件放在工具相同目录下
+```
+qiandao:
+  command_executor: 'http://{host}:{port}/wd/hub'   #selenium调用的远程chrome地址
+  image_captcha_save_path: '{path}'                 #缓存验证码图片的文件目录
+  qiyeweixin: '{url}'                               #企业微信推送消息机器人地址
+  baidu:                                            #百度AI 用于自动识别验证码
+    APP_ID: ''
+    API_KEY: ''
+    SECRET_KEY: ''
+  sites:                                            #站点信息列表,可以自行添加多个站点
+    - site_name: ''                                 #站点名称
+      index_url: ''                                 #首页地址url
+      index_url_str: 'index'                        #首页地址url内任意的关键词
+      index_btn_xpath: ''                           #登录后跳转首页的按钮的xpath
+      login_url: ''                                 #登录地址url
+      login_url_str: 'login'                        #登录地址url内任意的关键词
+      username_input_xpath: ''                      #登录页面用户名输入框的xpath
+      password_input_xpath: ''                      #登录页面密码输入框的xpath
+      login_image_captcha_xpath: ''                 #登录页面验证码图片的xpath(如无验证码可空)
+      login_image_captcha_input_xpath: ''           #登录页面验证码输入框的xpath(如无验证码可空)
+      login_captcha_length:                         #登录页面验证码的长度(如无验证码可空)
+      submit_btn_xpath: ''                          #登录页面提交按钮的xpath
+      attendance_btn_xpath: ''                      #签到按钮的xpath
+      attendance_text: ''                           #签到按钮文字
+      username: ''                                  #不用说也知道是啥了吧       
+      password: ''                                  #不用说也知道是啥了吧+1
+```
+> ###### 并不完整，如想得到完整配置文件，请自行查看源码 (≧▽≦)/
