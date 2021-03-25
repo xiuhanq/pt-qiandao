@@ -45,6 +45,9 @@ PT站自动签到工具
 ```
 qiandao:
   command_executor: 'http://{host}:{port}/wd/hub'   #selenium调用的远程chrome地址
+  cron:                                             #增加定时任务配置 每天的 {hour:minute}这个时间会执行一次定时任务
+    hour: 20                                        #每天的几点开始
+    minute: 30                                      #配合hour 每天的几点几分开始
   image_captcha_save_path: '{path}'                 #缓存验证码图片的文件目录
   qiyeweixin: '{url}'                               #企业微信推送消息机器人地址
   baidu:                                            #百度AI 用于自动识别验证码

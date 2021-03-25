@@ -93,7 +93,7 @@ def do_job():
     #创建调度器：BlockingScheduler
     scheduler = BlockingScheduler()
     #添加任务,时间间隔10分钟
-    scheduler.add_job(run_main, 'interval', days=1,next_run_time=datetime.datetime.now(), id='job_pt_qiandao')
+    scheduler.add_job(run_main, 'cron', hour='20', minute='30', id='job_pt_qiandao')
     scheduler.start()
 
 do_job()
