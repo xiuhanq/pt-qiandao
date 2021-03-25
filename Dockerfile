@@ -1,5 +1,6 @@
 FROM python:3.9.2-slim-buster
 WORKDIR /ptqiandao
+ENV TZ "Asia/Tokyo"
 RUN python3 -m pip install selenium \
     && python3 -m pip install pyyaml \
     && python3 -m pip install loguru \

@@ -8,7 +8,7 @@ from utils.OpenCDSite import OpenCDSite
 from utils.Notify import Notify
 import yaml
 import os
-import datetime
+import time
 
 logger.add('pt-qiandao.log', format='{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}',encoding='utf-8')
 
@@ -93,6 +93,7 @@ def do_job():
     #创建调度器：BlockingScheduler
     scheduler = BlockingScheduler()
     #添加任务,时间间隔10分钟
+    logger.debug('当前时间:{}',time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
     logger.debug("预计任务开始执行时间 {}:{}",config.get('hour'),config.get('minute'))
     scheduler.add_job(run_main, 'cron', hour=config.get('hour'), minute=config.get('minute'))
     scheduler.start()
