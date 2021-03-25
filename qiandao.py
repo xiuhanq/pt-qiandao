@@ -87,7 +87,7 @@ def run_main():
     for result in results:
         logger.debug('站点:{},登录结果:{},签到结果:{}',result.siteName,result.loginResult,result.attendanceResult)
     
-    Notify().notify(notify_list=result)
+    Notify().notify(notify_list=results)
 
 def do_job():
     #创建调度器：BlockingScheduler
