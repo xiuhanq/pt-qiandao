@@ -6,7 +6,7 @@ RUN python3 -m pip install selenium \
     && python3 -m pip install apscheduler \
     && python3 -m pip install pillow \
     && python3 -m pip install baidu-aip \
-    mkdir imageCaptcha
+    && mkdir imageCaptcha
 COPY qiandao.py .
 COPY utils ./utils
 RUN ls -la ./*
