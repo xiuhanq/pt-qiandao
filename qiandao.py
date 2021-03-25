@@ -93,7 +93,8 @@ def do_job():
     #创建调度器：BlockingScheduler
     scheduler = BlockingScheduler()
     #添加任务,时间间隔10分钟
-    scheduler.add_job(run_main, 'cron', hour=config.get('hour'), minute=config.get('minute'), id='job_pt_qiandao')
+    logger.debug("预计任务开始执行时间 {}:{}",config.get('hour'),config.get('minute'))
+    scheduler.add_job(run_main, 'cron', hour=config.get('hour'), minute=config.get('minute'))
     scheduler.start()
 
 do_job()
