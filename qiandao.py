@@ -90,12 +90,13 @@ def run_main():
 
 def do_job():
     config = get_config()
+    cron = config.get('cron');
     #创建调度器：BlockingScheduler
     scheduler = BlockingScheduler()
     #添加任务,时间间隔10分钟
     logger.debug('当前时间:{}',time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
-    logger.debug("预计任务开始执行时间 {}:{}",config.get('hour'),config.get('minute'))
-    scheduler.add_job(run_main, 'cron', hour=config.get('hour'), minute=config.get('minute'))
+    logger.debug("预计任务开始执行时间 {}:{}",cron.get('hour'),cron.get('minute'))
+    scheduler.add_job(run_main, 'cron', hour=cron.get('hour'), minute=cron.get('minute'))
     scheduler.start()
 
 do_job()
