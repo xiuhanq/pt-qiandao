@@ -67,7 +67,6 @@ def get_sitesConfig(qiandaoCfg):
 
 def run_main():
     config = get_config()
-    notify_url = config.get('qiyeweixin')
     sites = get_sitesConfig(config)
     driver=get_dirver(config)
     # driver.get('https://bot.sannysoft.com/')
@@ -90,10 +89,11 @@ def run_main():
     Notify().notify(notify_list=results)
 
 def do_job():
+    config = get_config()
     #创建调度器：BlockingScheduler
     scheduler = BlockingScheduler()
     #添加任务,时间间隔10分钟
-    scheduler.add_job(run_main, 'cron', hour='20', minute='30', id='job_pt_qiandao')
+    scheduler.add_job(run_main, 'cron', hour=config.get('hour'), minute=config.get('minute'), id='job_pt_qiandao')
     scheduler.start()
 
 do_job()
