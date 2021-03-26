@@ -22,6 +22,8 @@ PT站自动签到工具
     - [6 安装百度API](#6-安装百度api)
     - [配置文件说明](#配置文件说明)
 - [Docker](#docker)
+    - [启动命令](#启动命令)
+    - [docker-compose 配置](#docker-compose-配置)
 
 ## 原理
 1. <font color='blue'>基于selenium调用远程chrome浏览器,模拟用户签到动作.</font>
@@ -77,3 +79,25 @@ qiandao:
 >并不完整，如想得到完整配置文件，请自行查看源码 (≧▽≦)/
 
 # Docker
+>[Docker地址](https://hub.docker.com/r/xiuhanq/pt-qiandao)
+### 启动命令
+```
+docker run -d \
+--name aliyunddns \
+-v {your_config_path}:/ptqiandao/config.yaml \         #请修改为自己实际的config文件路径
+--restart always \
+xiuhanq/pt-qiandao:latest
+```
+### docker-compose 配置
+```
+version: "3.8"
+services:
+  pt-qiandao:
+    image: xiuhanq/pt-qiandao:latest
+    container_name: pt-qiandao
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - {your_config_path}:/ptqiandao/config.yaml # 绝对路径请修改为自己的config文件
+    restart: always
+    ```
