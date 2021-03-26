@@ -57,7 +57,7 @@ def get_dirver(qiandaoCfg):
     driver.delete_all_cookies()
     driver.maximize_window()
     #等待60秒
-    driver.implicitly_wait(60)
+    driver.implicitly_wait(30)
     return driver
 
 def get_sitesConfig(qiandaoCfg):

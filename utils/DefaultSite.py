@@ -18,6 +18,7 @@ class DefaultSite(object):
         from selenium.common.exceptions import NoSuchElementException
         driver = self._driver
         try:
+            time.sleep(10)
             element = driver.find_element(By.XPATH, xpath)
         except NoSuchElementException as e:
             # 发生了NoSuchElementException异常，说明页面中未找到该元素，返回False
@@ -76,17 +77,22 @@ class DefaultSite(object):
         result = False
         if site_config.get('login_image_captcha_xpath') is not None:           
             if self.check_elementExists(site_config.get('login_image_captcha_xpath'))==True:
-                captcha = Captcha(driver,site_config.get('image_captcha_save_path'),site_config.get('login_image_captcha_xpath'))
-                captcha_str = captcha.image_text()
-                captcha_len = len(captcha_str)
-                verify_len = int(site_config.get('login_captcha_length'))
-                logger.debug('站点:{},验证码:{},验证码长度:{},有效长度:{}',site_name, captcha_str,captcha_len,verify_len)
-                if captcha_len != verify_len:
-                    logger.debug('{},登录验证码[{}]有误,重新刷新页面!',site_name,captcha_str)
-                    return result
-                captcha_input = driver.find_element(By.XPATH,site_config.get('login_image_captcha_input_xpath')) 
-                captcha_input.send_keys(captcha_str)
-                result = True
+                image_captcha = driver.find_element(By.XPATH,site_config.get('login_image_captcha_xpath')) 
+                if image_captcha.is_displayed() == True:
+                    captcha = Captcha(driver,site_config.get('image_captcha_save_path'),site_config.get('login_image_captcha_xpath'))
+                    captcha_str = captcha.image_text()
+                    captcha_len = len(captcha_str)
+                    verify_len = int(site_config.get('login_captcha_length'))
+                    logger.debug('站点:{},验证码:{},验证码长度:{},有效长度:{}',site_name, captcha_str,captcha_len,verify_len)
+                    if captcha_len != verify_len:
+                        logger.debug('{},登录验证码[{}]有误,重新刷新页面!',site_name,captcha_str)
+                        return result
+                    captcha_input = driver.find_element(By.XPATH,site_config.get('login_image_captcha_input_xpath')) 
+                    captcha_input.send_keys(captcha_str)
+                    result = True
+                else:
+                    logger.debug('验证码元素不展示,无需处理登录验证码')
+                    result=True  
             else:
                 logger.debug('验证码元素不存在,无需处理登录验证码')
                 result=True
@@ -169,6 +175,7 @@ class DefaultSite(object):
         driver = self._driver
         attendance_btn_xpath = site_config.get('attendance_btn_xpath')
         index_btn_xpath = site_config.get('index_btn_xpath')
+        driver.refresh()
         index_btn = driver.find_element(By.XPATH,index_btn_xpath)
         index_btn.click()
         if self.check_elementExists(attendance_btn_xpath)==True:
