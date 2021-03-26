@@ -100,4 +100,4 @@ services:
     volumes:
       - {your_config_path}:/ptqiandao/config.yaml # 绝对路径请修改为自己的config文件
     restart: always
-    ```
+```
