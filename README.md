@@ -13,6 +13,7 @@ PT站自动签到工具
 - [介绍](#介绍)
 - [免责声明](#免责声明)
 - [目录](#目录)
+  - [版本日志](#版本日志)
   - [原理](#原理)
   - [需要安装的包](#需要安装的包)
     - [1. selenium](#1-selenium)
@@ -22,9 +23,20 @@ PT站自动签到工具
     - [5. 安装图片处理器PIL](#5-安装图片处理器pil)
     - [6 安装百度API](#6-安装百度api)
     - [配置文件说明](#配置文件说明)
-- [Docker](#docker)
+  - [Docker](#docker)
     - [启动命令](#启动命令)
     - [docker-compose 配置](#docker-compose-配置)
+  - [待优化功能](#待优化功能)
+
+## 版本日志
+- 1.0.X
+  - 简化配置文件(可自定义覆盖默认配置)
+  - 优化README
+- 0.0.X 初始版本
+  - 使用使用python3基础Docker镜像
+  - 配合selenium/standalone-chrome Docker镜像使用
+  - 配置文件包含所有支持站点信息 
+
 
 ## 原理
 1. <font color='blue'>基于selenium调用远程chrome浏览器,模拟用户签到动作.</font>
@@ -79,7 +91,7 @@ qiandao:
 ```
 >并不完整，如想得到完整配置文件，请自行查看源码 (≧▽≦)/
 
-# Docker
+## Docker
 >[Docker地址](https://hub.docker.com/r/xiuhanq/pt-qiandao)
 ### 启动命令
 ```
@@ -102,3 +114,8 @@ services:
       - {your_config_path}:/ptqiandao/config.yaml # 绝对路径请修改为自己的config文件
     restart: always
 ```
+## 待优化功能
+状态 | 内容 |
+--- | --- | 
+- [ ] | 简化配置文件  |
+- [ ] | 任意配置用户名密码登录或者cookies登录 |
