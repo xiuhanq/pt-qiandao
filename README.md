@@ -29,7 +29,7 @@ PT站自动签到工具
   - [待优化功能](#待优化功能)
 
 ## 版本日志
-- 1.0.X
+- 1.0.0
   - 简化配置文件(可自定义覆盖默认配置)
   - 优化README
 - 0.0.X 初始版本
@@ -96,7 +96,15 @@ qiandao:
 ### 启动命令
 ```
 docker run -d \
---name aliyunddns \
+--name ptchrome \
+--restart always \
+-p 5901:5900 \
+-p 4444:4444 \
+-v /dev/shm:/dev/shm \
+selenium/standalone-chrome-debug:latest
+
+docker run -d \
+--name pt-qiandao \
 -v {your_config_path}:/ptqiandao/config.yaml \         #请修改为自己实际的config文件路径
 --restart always \
 xiuhanq/pt-qiandao:latest
@@ -106,16 +114,40 @@ xiuhanq/pt-qiandao:latest
 version: "3.8"
 services:
   pt-qiandao:
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 64M
     image: xiuhanq/pt-qiandao:latest
     container_name: pt-qiandao
     environment:
       - TZ=Asia/Shanghai
     volumes:
-      - {your_config_path}:/ptqiandao/config.yaml # 绝对路径请修改为自己的config文件
+      - {your_config_path}:/ptqiandao/config.yaml # 配置文件路径请修改为自己的config文件
+    depends_on:
+      - ptchrome
+    restart: always
+  ptchrome:
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+    image: selenium/standalone-chrome-debug:latest
+    container_name: ptchrome
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+      - 5901:5900
+      - 4444:4444
     restart: always
 ```
 ## 待优化功能
 状态 | 内容 |
 --- | --- | 
+- [ ] | 优化README  |
 - [ ] | 简化配置文件  |
 - [ ] | 任意配置用户名密码登录或者cookies登录 |
