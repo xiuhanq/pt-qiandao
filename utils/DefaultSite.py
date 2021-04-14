@@ -183,19 +183,6 @@ class DefaultSite(object):
                     if self.do_attendance_captcha() == False:
                             continue
                     attendance_result = self.check_attendance_result()
-                # if self.check_elementExists(attendance_btn_xpath)==True:
-                #     attendance_button = driver.find_element(By.XPATH,attendance_btn_xpath)
-                #     btn_text = attendance_button.text
-                #     logger.debug('签到按钮文本:{}',btn_text)
-                #     if site_config.get('attendance_text')==btn_text:
-                #         attendance_button.click()
-                #         if self.do_attendance_captcha() == False:
-                #             continue
-                #         attendance_result = self.check_attendance_result()
-                #     else:
-                #         logger.debug('站点:{}无需签到或者已经完成签到',site_name)
-                #         attendance_result = True 
-                #         break
                 else:   
                     logger.debug('站点:{}无需签到或者已经完成签到',site_name)
                     attendance_result = True  
@@ -211,24 +198,6 @@ class DefaultSite(object):
 
     def do_attendance_captcha(self):
         logger.debug('开始处理签到验证码')
-        # if site_config.get('attendance_image_captcha_xpath') is not None:
-        #     logger.debug('开始处理签到验证码')
-        #     driver.switch_to.frame(0)
-        #     if self.check_elementExists(site_config.get('attendance_image_captcha_xpath'))==True:
-        #         captcha = Captcha(driver,site_config.get('image_captcha_save_path'),site_config.get('login_image_captcha_xpath'))
-        #         captcha_str = captcha.image_text()
-        #         captcha_len = len(captcha_str)
-        #         verify_len = int(site_config.get('attendance_captcha_length'))
-        #         logger.debug('站点:{},签到验证码:{},签到验证码长度:{},有效长度:{}',site_name, captcha_str,captcha_len,verify_len)
-        #         if captcha_len != verify_len:
-        #             logger.debug('{},签到验证码[{}]有误,重新刷新页面!',site_name,captcha_str)
-        #             continue
-        #         captcha_input = driver.find_element(By.XPATH,site_config.get('attendance_image_captcha_input_xpath')) 
-        #         captcha_input.send_keys(captcha_str)
-        #         captcha_submit_btn = driver.find(By.XPATH, site_config.get('attendance_submit_btn_xpath'))
-        #         captcha_submit_btn.click()
-        #     else:
-        #         logger.debug('没有找到签到验证码')
         return True
 
     def check_attendance_result(self):
