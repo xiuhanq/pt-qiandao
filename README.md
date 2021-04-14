@@ -23,7 +23,7 @@ PT站自动签到工具
     - [4. 定时任务框架](#4-定时任务框架)
     - [5. 安装图片处理器PIL](#5-安装图片处理器pil)
     - [6 安装百度API](#6-安装百度api)
-    - [配置文件说明](#配置文件说明)
+  - [配置文件说明](#配置文件说明)
   - [Docker](#docker)
     - [Docker镜像地址](#docker镜像地址)
     - [启动命令](#启动命令)
@@ -76,8 +76,7 @@ HDU |
 ### 6 安装百度API
 `python3 -m pip install baidu-aip`
 
-### 配置文件说明 
-将`config.yaml`文件放在工具相同目录下
+## 配置文件说明 
 ```
 qiandao:
   command_executor: 'http://{host}:{port}/wd/hub'   #selenium调用的远程chrome地址
@@ -181,8 +180,23 @@ services:
     restart: always
 ```
 ## 待优化功能
-状态 | 内容 |
---- | --- | 
-- [x] | 优化README  |
-- [X] | 简化配置文件  |
-- [X] | 任意配置用户名密码登录或者cookies登录 |
+<table>
+  <tr>
+    <td>状态</td>
+    <td>内容</td>
+  </tr>
+  <tr>
+    <td>&#10003;</td>
+    <td>优化README</td>
+  </tr>
+  <tr>
+    <td>&#10003;</td>
+    <td>简化配置文件</td>
+  </tr>
+  <tr>
+    <td>&#10003;</td>
+    <td>任意配置用户名密码登录或者cookies登录</td>
+  </tr>  
+<table>
+
+
