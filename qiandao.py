@@ -12,7 +12,8 @@ import os
 import time
 
 logger.add('pt-qiandao.log', format='{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}',encoding='utf-8')
-def get_defaultSiteConfig():
+
+def get_defaultConfig():
     # 获取当前脚本所在文件夹路径
     current_path = os.path.abspath(".")
     # 获取yaml配置文件路径
@@ -23,9 +24,12 @@ def get_defaultSiteConfig():
     cfgStr = file.read() 
     # 用load方法转字典
     cfg = yaml.load(cfgStr, Loader=yaml.FullLoader)
-    defaultSiteConfig = cfg.get('sites')
-    # logger.info('默认站点签到配置文件:{}',str(qiandaoCfg))
+    qiandaoDefaultCfg = cfg.get('pt-qiandao')
     file.close()
+    return qiandaoDefaultCfg
+
+def get_defaultSiteConfig(qiandaoDefaultCfg):
+    defaultSiteConfig = qiandaoDefaultCfg.get('sites')
     return defaultSiteConfig
 
 def get_config():
@@ -82,18 +86,21 @@ def get_customerSitesConfig(qiandaoCfg):
     return sitesConfig
 
 def run_main():
-    defaultSiteConfig =  get_defaultSiteConfig()
+    defaultConfig=get_defaultConfig()
+    defaultSiteConfig =  get_defaultSiteConfig(defaultConfig)
     config = get_config()
     sites = get_customerSitesConfig(config)
     driver=get_dirver(config)
     results = []
     for customerSite in sites:
-        customerSite.setdefault('image_captcha_save_path',config.get('image_captcha_save_path'))
+        customerSite.setdefault('image_captcha_save_path',defaultConfig.get('image_captcha_save_path'))
+        customerSite.setdefault('cookies_path',defaultConfig.get('cookies_path'))
         username = customerSite.get('username')
         password = customerSite.get('password')
         site_name = customerSite.get('site_name')
-        if username is None or password is None:
-            logger.info('站点:【{}】 用户名或者密码为空,跳过',site_name)
+        cookies = customerSite.get('cookies')
+        if (username is None or password is None) and cookies is None:
+            logger.info('站点:【{}】 用户名密码或者Cookies为空,跳过',site_name)
             continue
         # needSkip = False
         site = customerSite.copy()
@@ -124,5 +131,4 @@ def do_job():
     scheduler.add_job(run_main, 'cron', hour=cron.get('hour'), minute=cron.get('minute'))
     scheduler.start()
 
-# do_job()
-run_main()
+do_job()

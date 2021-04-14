@@ -15,6 +15,7 @@ PT站自动签到工具
 - [目录](#目录)
   - [版本日志](#版本日志)
   - [原理](#原理)
+  - [默认支持站点](#默认支持站点)
   - [需要安装的包](#需要安装的包)
     - [1. selenium](#1-selenium)
     - [2. yaml配置文件读取组件](#2-yaml配置文件读取组件)
@@ -24,6 +25,7 @@ PT站自动签到工具
     - [6 安装百度API](#6-安装百度api)
     - [配置文件说明](#配置文件说明)
   - [Docker](#docker)
+    - [Docker镜像地址](#docker镜像地址)
     - [启动命令](#启动命令)
     - [docker-compose 配置](#docker-compose-配置)
   - [待优化功能](#待优化功能)
@@ -32,6 +34,7 @@ PT站自动签到工具
 - 1.0.0
   - 简化配置文件(可自定义覆盖默认配置)
   - 优化README
+  - 增加cookies支持
 - 0.0.X 初始版本
   - 使用使用python3基础Docker镜像
   - 配合selenium/standalone-chrome Docker镜像使用
@@ -42,6 +45,22 @@ PT站自动签到工具
 1. <font color='blue'>基于selenium调用远程chrome浏览器,模拟用户签到动作.</font>
 2. <font color='blue'>本工具需要配合远程chrome一起使用，如何使用远程chrome请自行[百度](https://www.baidu.com)</font>
 
+## 默认支持站点
+站点 | 
+--- |
+海棠(htpt) |
+老师站(nicept) |
+HDU |
+猫站(pterclub)|
+家园(hdhome) |
+高清时间(hdtime) |
+烧包(ptsbao) |
+聆音(soulvoice) |
+柠檬(lemonhd) |
+铂金家(pthome) |
+海胆(haidan) |
+皇后(opencd) |
+> 别问为啥只有这些,问就是没有 ╮(╯▽╰)╭
 
 ## 需要安装的包
 ### 1. selenium
@@ -65,7 +84,6 @@ qiandao:
   cron:                                             #增加定时任务配置 每天的 {hour:minute}这个时间会执行一次定时任务
     hour: 20                                        #每天的几点开始
     minute: 30                                      #配合hour 每天的几点几分开始
-  image_captcha_save_path: '{path}'                 #缓存验证码图片的文件目录
   qiyeweixin: '{url}'                               #企业微信推送消息机器人地址
   baidu:                                            #百度AI 用于自动识别验证码
     APP_ID: ''
@@ -73,26 +91,42 @@ qiandao:
     SECRET_KEY: ''
   sites:                                            #站点信息列表,可以自行添加多个站点
     - site_name: ''                                 #站点名称
-      index_url: ''                                 #首页地址url
-      index_url_str: 'index'                        #首页地址url内任意的关键词
-      index_btn_xpath: ''                           #登录后跳转首页的按钮的xpath
-      login_url: ''                                 #登录地址url
-      login_url_str: 'login'                        #登录地址url内任意的关键词
-      username_input_xpath: ''                      #登录页面用户名输入框的xpath
-      password_input_xpath: ''                      #登录页面密码输入框的xpath
-      login_image_captcha_xpath: ''                 #登录页面验证码图片的xpath(如无验证码可空)
-      login_image_captcha_input_xpath: ''           #登录页面验证码输入框的xpath(如无验证码可空)
-      login_captcha_length:                         #登录页面验证码的长度(如无验证码可空)
-      submit_btn_xpath: ''                          #登录页面提交按钮的xpath
-      attendance_btn_xpath: ''                      #签到按钮的xpath
-      attendance_text: ''                           #签到按钮文字
-      username: ''                                  #不用说也知道是啥了吧       
-      password: ''                                  #不用说也知道是啥了吧+1
+      username: 'xxxxx'                                       
+      password: 'xxxxx'
+      cookies: '{cookies_file_name}'                                  
 ```
->并不完整，如想得到完整配置文件，请自行查看源码 (≧▽≦)/
+
+> 配置文件内sites参数说明
+><table>
+> <tr align=center><td>键</td><td>描述 </td><td>必填</td><td>备注</td></tr>
+> <tr ><td> site_name </td><td> 站点名称 </td><td align=center> &#10003; </td><td> </td></tr>
+> <tr><td> username </td><td> 用户名 </td><td align=center> &#10003; </td><td rowspan=3>用户名密码和cookies两者二选一<br>如果两个都填了以用户名密码为主 <br>如果使用cookies登录,cookies导出后以json格式字符串保存到文本文件中，cookies参数填写文件名称 </td></tr>
+> <tr><td> password </td><td> 密码 </td><td align=center> &#10003; </td></tr>
+> <tr><td> cookies </td><td> cookies文件名称，内容为json格式字符串 </td><td align=center>&#10003;</td></tr>
+> <tr><td> index_url </td><td> 首页链接 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> index_url_str </td><td> 首页链接判断字符串 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> index_btn_xpath </td><td> 首页按钮xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> login_url </td><td> 登录链接 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> login_url_str </td><td> 登录链接判断字符串 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> username_input_xpath </td><td> 用户名输入框xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> password_input_xpath </td><td> 密码输入框xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> login_image_captcha_xpath </td><td> 登录验证码图片xpath选择器 </td><td align=center> &#10007;  </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> login_image_captcha_input_xpath </td><td> 登录验证码输入框xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> login_captcha_length </td><td> 登录验证码校验长度 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> submit_btn_xpath </td><td> 登录提交按钮xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> attendance_frame_id </td><td> 签到弹出框frameId</td><td align=center> &#10007; </td><td><font color='red'>opencd用</font><br>填写之后会覆盖默认配置</td></tr>
+> <tr><td> attendance_btn_xpath </td><td> 签到按钮xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> attendance_text </td><td> 签到按钮校验文本 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> attendance_image_captcha_xpath </td><td> 签到验证码图片xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> attendance_image_captcha_input_xpath </td><td> 签到验证码输入框xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> attendance_captcha_length </td><td> 签到验证码校验长度 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+> <tr><td> attendance_submit_btn_xpath </td><td> 签到提交按钮xpath选择器 </td><td align=center> &#10007; </td><td>填写之后会覆盖默认配置</td></tr>
+></table>
+> 
 
 ## Docker
->[Docker地址](https://hub.docker.com/r/xiuhanq/pt-qiandao)
+### Docker镜像地址
+> [https://hub.docker.com/r/xiuhanq/pt-qiandao](https://hub.docker.com/r/xiuhanq/pt-qiandao)
 ### 启动命令
 ```
 docker run -d \
@@ -106,6 +140,7 @@ selenium/standalone-chrome-debug:latest
 docker run -d \
 --name pt-qiandao \
 -v {your_config_path}:/ptqiandao/config.yaml \         #请修改为自己实际的config文件路径
+-v {your_cookies_files_path}:/ptqiandao/cookies_files/  #配合cookies登录时使用,目录为保存各站点cookies文件的目录
 --restart always \
 xiuhanq/pt-qiandao:latest
 ```
@@ -148,6 +183,6 @@ services:
 ## 待优化功能
 状态 | 内容 |
 --- | --- | 
-- [ ] | 优化README  |
-- [ ] | 简化配置文件  |
-- [ ] | 任意配置用户名密码登录或者cookies登录 |
+- [x] | 优化README  |
+- [X] | 简化配置文件  |
+- [X] | 任意配置用户名密码登录或者cookies登录 |

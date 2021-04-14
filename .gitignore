@@ -1,5 +1,6 @@
 #不再提交配置文件
 config.yaml
+*.txt
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

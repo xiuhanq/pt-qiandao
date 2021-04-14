@@ -1,3 +1,4 @@
+import json
 from logging import debug, log
 from loguru import logger
 from selenium.webdriver.common.by import By
@@ -26,12 +27,73 @@ class DefaultSite(object):
         else:
             # 没有发生异常，表示在页面中找到了该元素，返回True
             return True
+    
+    def do_login(self):
+        site_config = self._site_config
+        site_name = site_config.get('site_name')
+        username = site_config.get('username')
+        password = site_config.get('password')
+        cookies = site_config.get('cookies')
+        if username is not None and password is not None :
+            logger.debug("站点【{}】使用用户名密码登录",site_name)
+            return self.do_login_unamepass()
+        elif cookies is not None :
+            logger.debug("站点【{}】使用Cookies登录",site_name)
+            return self.do_login_cookies()
+        else:
+            logger.debug("站点【{}】没有配置用户名密码或者Cookies,无法登录",site_name)
+            return False
 
-    def do_login(self): 
+    def get_cookies(self):
+        site_config = self._site_config
+        site_name = site_config.get('site_name')
+        cookies_path = site_config.get('cookies_path')
+        cookies_file_paht = cookies_path+site_config.get('cookies')
+        # open方法打开直接读出来
+        file = open(cookies_file_paht, 'r', encoding='utf-8')
+        # 读出来是字符串
+        cookies_str = file.read()
+        cookies_list = json.loads(cookies_str)
+        # logger.debug('站点【{}】 cookies:{}',site_name,cookies_list)
+        return cookies_list
+
+    def do_login_cookies(self):
+        site_config = self._site_config
+        site_name = site_config.get('site_name')
+        index_url = site_config.get('index_url')
+        index_url_str = site_config.get('index_url_str')
+        logger.debug('首页地址:{}',index_url)
+        login_result = False
+        logger.debug('开始使用Cookies登录:{} =====>>',site_name)
+        driver = self._driver
+        cookies_list = self.get_cookies()
+        driver.delete_all_cookies()
+        driver.get(index_url)
+        for cookie in cookies_list:
+            # logger.debug("cookie:{}",cookie)
+            #遍历删除sameSite,注意，旧版chrome可能是没有samesite
+            try:
+                cookie.pop('sameSite')
+            except:
+                pass
+            driver.add_cookie(cookie)
+        
+        for i in range(1,10):
+            logger.debug('第{}次尝试登录:{}',i,site_name)
+            driver.get(index_url)
+            current_url = driver.current_url
+            if current_url.find(index_url_str)>0:
+                login_result = True 
+                break
+            else:
+                time.sleep(2)
+        return login_result
+
+    def do_login_unamepass(self): 
         site_config = self._site_config
         driver = self._driver
         site_name = site_config.get('site_name')
-        logger.debug('开始登录:{} =====>>',site_name)
+        logger.debug('开始使用账号密码登录:{} =====>>',site_name)
         index_url = site_config.get('index_url')
         login_url = site_config.get('login_url')
         index_url_str = site_config.get('index_url_str')
