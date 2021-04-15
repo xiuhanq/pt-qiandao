@@ -60,6 +60,9 @@ HDU |
 铂金家(pthome) |
 海胆(haidan) |
 皇后(opencd) |
+杜比视界(hdatmos) <font color=red>只支持cooikes登录</font> |
+杜比(hddolby) <font color=red>只支持cooikes登录</font> |
+PT时间(pttime) <font color=red>只支持cooikes登录</font> |
 > 别问为啥只有这些,问就是没有 ╮(╯▽╰)╭
 
 ## 需要安装的包
