@@ -10,6 +10,7 @@ RUN python3 -m pip install selenium \
     && mkdir imageCaptcha
 COPY qiandao.py .
 COPY utils ./utils
+COPY DefaultSiteConfig.yaml .
 
 ENTRYPOINT [ "python3" ]
 CMD [ "/ptqiandao/qiandao.py" ] 
