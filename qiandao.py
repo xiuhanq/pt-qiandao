@@ -76,8 +76,8 @@ def get_dirver(qiandaoCfg):
     )
     driver.delete_all_cookies()
     driver.maximize_window()
-    #等待60秒
-    driver.implicitly_wait(30)
+    #等待5秒
+    driver.implicitly_wait(5)
     return driver
 
 def get_customerSitesConfig(qiandaoCfg):
@@ -86,6 +86,7 @@ def get_customerSitesConfig(qiandaoCfg):
     return sitesConfig
 
 def run_main():
+    since = time.time()
     defaultConfig=get_defaultConfig()
     defaultSiteConfig =  get_defaultSiteConfig(defaultConfig)
     config = get_config()
@@ -116,9 +117,11 @@ def run_main():
         else:
             results.append(DefaultSite(driver,site).main())
     driver.quit()
+    time_elapsed = time.time() - since
+    logger.debug('签到用时 {}m {}s',time_elapsed // 60, time_elapsed % 60)
     for result in results:
-        logger.debug('站点:{},登录结果:{},签到结果:{}',result.siteName,result.loginResult,result.attendanceResult)
-    Notify().notify(notify_list=results)
+        logger.debug('站点:{},登录结果:{},签到结果:{}【{}】',result.siteName,result.loginResult,result.attendanceResult,result.attendanceResultTxt)
+    Notify().notify(notify_list=results,since=since,time_elapsed=time_elapsed)
 
 def do_job():
     config = get_config()

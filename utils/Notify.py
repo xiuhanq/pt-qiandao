@@ -21,21 +21,27 @@ class Notify(object):
         file.close()
         return qiandaoCfg.get('qiyeweixin')
         
-    def notify(self,notify_list=[]):
+    def notify(self,notify_list=[],since=0,time_elapsed=0):
         content = '# PT站点自动签到结果 \n'
         for result in notify_list:
-            content = content + '> ###### '+ str(result.siteName) +'\n'
+            content = content + '> #### '+ str(result.siteName) +' \n'
             content = content + '> 登录:'
             if result.loginResult == True:
                 content = content + '<font color="info">成功</font>'
             else:
                 content = content + '<font color="red">失败</font>'
+            content = content+'\n'
             content = content + ' 签到:'  
             if result.attendanceResult == True:
                 content = content + '<font color="info">成功</font>'
+                content = content + '【'
+                content = content + result.attendanceResultTxt 
+                content = content + '】'
             else:
                 content = content + '<font color="red">失败</font>'
             content = content+'\n'
+        content = content+'> ### 总用时【 {:.0f}m {:.0f}s】 \n'.format(time_elapsed // 60, time_elapsed % 60)
+
         data={
             "msgtype": "markdown",
             "markdown": {

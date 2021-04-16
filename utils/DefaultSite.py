@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from utils.Captcha import Captcha
 from utils.SiteResultInfo import SiteResultInfo
 import time
-
+import re
 
 logger.add('pt-qiandao.log', format='{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}',encoding='utf-8')
 
@@ -19,9 +19,11 @@ class DefaultSite(object):
         from selenium.common.exceptions import NoSuchElementException
         driver = self._driver
         try:
-            time.sleep(10)
+            time.sleep(5)
             element = driver.find_element(By.XPATH, xpath)
         except NoSuchElementException as e:
+            # logger.warning('没有获取到元素:{}',xpath)
+            # logger.exception(e)
             # 发生了NoSuchElementException异常，说明页面中未找到该元素，返回False
             return False
         else:
@@ -60,15 +62,16 @@ class DefaultSite(object):
     def do_login_cookies(self):
         site_config = self._site_config
         site_name = site_config.get('site_name')
+        login_url = site_config.get('login_url')
         index_url = site_config.get('index_url')
         index_url_str = site_config.get('index_url_str')
-        logger.debug('首页地址:{}',index_url)
+        logger.debug('登录地址:{}',login_url)
         login_result = False
         logger.debug('开始使用Cookies登录:{} =====>>',site_name)
         driver = self._driver
         cookies_list = self.get_cookies()
         driver.delete_all_cookies()
-        driver.get(index_url)
+        driver.get(login_url)
         for cookie in cookies_list:
             # logger.debug("cookie:{}",cookie)
             #遍历删除sameSite,注意，旧版chrome可能是没有samesite
@@ -204,11 +207,11 @@ class DefaultSite(object):
         result = False    
         site_config = self._site_config
         driver = self._driver
-        attendance_btn_xpath = site_config.get('attendance_btn_xpath')
-        index_btn_xpath = site_config.get('index_btn_xpath')
         driver.refresh()
+        index_btn_xpath = site_config.get('index_btn_xpath')
         index_btn = driver.find_element(By.XPATH,index_btn_xpath)
         index_btn.click()
+        attendance_btn_xpath = site_config.get('attendance_btn_xpath')
         if self.check_elementExists(attendance_btn_xpath)==True:
             attendance_button = driver.find_element(By.XPATH,attendance_btn_xpath)
             btn_text = attendance_button.text
@@ -219,10 +222,47 @@ class DefaultSite(object):
             result = True
         return result
 
+    def get_attendance_result_text(self):
+        site_config = self._site_config
+        driver = self._driver
+        site_name = site_config.get('site_name')
+        logger.debug('开始获取站点【{}】签到结果',site_name)
+        driver.refresh()
+        index_btn_xpath = site_config.get('index_btn_xpath')
+        index_btn = driver.find_element(By.XPATH,index_btn_xpath)
+        index_btn.click()
+        attendance_result_xpath = site_config.get('attendance_result_xpath')
+        attendance_result_txt_matchType = site_config.get('attendance_result_txt_matchType')
+        result_txt = ''
+        if attendance_result_xpath is None:
+            return result_txt
+        # logger.debug('站点【{}】attendance_result_xpath:{}',site_name,attendance_result_xpath)
+        
+        if self.check_elementExists(attendance_result_xpath)==True:
+            attendance_result_txt = driver.find_element(By.XPATH,attendance_result_xpath)
+            result_txt = attendance_result_txt.text
+            if attendance_result_txt_matchType == 1 :            
+                p = re.compile(r'[(](.*?)[)]', re.S)           
+                result_txt=re.findall(p, result_txt)[0]
+            elif attendance_result_txt_matchType == 2 :
+                p = re.compile(r'[\[](.*?)[]]', re.S)           
+                result_txt=re.findall(p, result_txt)[0]
+            elif attendance_result_txt_matchType == 3 :
+                p = re.compile(r'[(](.*?)[)]', re.S)           
+                result_txt=re.findall(p, result_txt)[1]
+            elif attendance_result_txt_matchType == 4 :
+                p = re.compile(r'[(](.*?)[)]', re.S)           
+                result_txt=re.findall(p, result_txt)[2]
+
+            logger.debug('站点【{}】签到结果:{}',site_name,result_txt)
+        else:
+            logger.debug('站点【{}】没有获取到签到结果',site_name)
+        return result_txt
 
     def main(self):
         loginResult = False
         attendanceResult = False
+        attendanceResultTxt = ''
         site_config = self._site_config
         siteName=site_config.get('site_name')
         try:
@@ -234,8 +274,13 @@ class DefaultSite(object):
             if loginResult == True:
                 try:
                     attendanceResult = self.do_attendance()
+                    if attendanceResult == True:
+                        try:
+                           attendanceResultTxt = self.get_attendance_result_text() 
+                        except Exception as err:
+                            logger.exception('站点:{} 获取签到结果异常!',siteName,err)
                 except Exception as err:
                     logger.exception('站点:{} 签到异常!',siteName,err)
         finally:
-            siteResult = SiteResultInfo(siteName,loginResult,attendanceResult)
+            siteResult = SiteResultInfo(siteName,loginResult,attendanceResult,attendanceResultTxt)
             return siteResult
