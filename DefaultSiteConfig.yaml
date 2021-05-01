@@ -43,7 +43,7 @@ pt-qiandao:
       login_image_captcha_input_xpath: '//*[@id="nav_block"]/form[2]/table/tbody/tr[4]/td[2]/input[1]'
       login_captcha_length: 6
       submit_btn_xpath: '//*[@id="nav_block"]/form[2]/table/tbody/tr[6]/td/input[1]' 
-      attendance_btn_xpath: '//*[@id="yiqiandao"]'
+      attendance_btn_xpath: '//*[@id="qiandao"]/a'
       attendance_text: '[签到]'
       attendance_result_xpath: '//*[@id="yiqiandao"]'
       attendance_result_txt_matchType: 2
