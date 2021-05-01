@@ -6,6 +6,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from utils.DefaultSite import DefaultSite
 from utils.HaidanSite import HaidanSite
 from utils.OpenCDSite import OpenCDSite
+from utils.HduSite import HduSite
 from utils.Notify import Notify
 import yaml
 import os
@@ -114,6 +115,8 @@ def run_main():
             results.append(HaidanSite(driver,site).main())
         elif '皇后(opencd)' == site_name:
             results.append(OpenCDSite(driver,site).main())
+        elif 'HDU' == site_name:
+            results.append(HduSite(driver,site).main())
         else:
             results.append(DefaultSite(driver,site).main())
     driver.quit()

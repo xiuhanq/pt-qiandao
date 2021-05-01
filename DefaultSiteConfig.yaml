@@ -134,7 +134,7 @@ pt-qiandao:
       attendance_btn_xpath: '//*[@id="info_block"]/tbody/tr/td/table/tbody/tr/td[1]/span/a[5]'
       attendance_text: '签到得魔力'
       attendance_result_xpath: '//*[@id="info_block"]/tbody/tr/td/table/tbody/tr/td[1]/span'
-      attendance_result_txt_matchType: 2
+      attendance_result_txt_matchType: 1
     - site_name: '柠檬(lemonhd)'
       index_url: 'https://lemonhd.org/index.php'
       index_url_str: 'index'
